@@ -1,6 +1,4 @@
-# Linear Clone
-
-A project management application built with Next.js, inspired by Linear.
+Next.js Fundamentals,
 
 ## Features
 
@@ -30,7 +28,7 @@ A project management application built with Next.js, inspired by Linear.
 1. Clone the repository
 
    ```bash
-   git clone https://github.com/yourusername/linear-clone.git
+   git clone https://github.com/VelAl/next.js-issue-tracker.git
    cd linear-clone
    ```
 
@@ -76,4 +74,4 @@ A project management application built with Next.js, inspired by Linear.
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License. It is a training project created as part of the Next.js Fundamentals, v4 course on Frontend Masters: https://frontendmasters.com/courses/next-js-v4/.
