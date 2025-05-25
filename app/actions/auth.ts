@@ -8,7 +8,7 @@ import {
   deleteSession,
 } from '@/lib/auth'
 import { getUserByEmail } from '@/lib/dal'
-import { mockDelay } from '@/lib/utils'
+// import { mockDelay } from '@/lib/utils'
 import { redirect } from 'next/navigation'
 
 // Define Zod schema for signin validation
@@ -37,4 +37,136 @@ export type ActionResponse = {
   message: string
   errors?: Record<string, string[]>
   error?: string
+}
+
+export const signIn = async (formData: FormData): Promise<ActionResponse> => {
+  try {
+    // await mockDelay(700)
+
+    const data = {
+      email: formData.get('email') as string,
+      password: formData.get('password') as string,
+    }
+
+    // Validate inputs data with Zod
+    const validatedData = SignInSchema.safeParse(data)
+    if (!validatedData.success) {
+      return {
+        success: false,
+        message: 'Validation failed',
+        errors: validatedData.error.flatten().fieldErrors,
+      }
+    }
+
+    // Find user by email
+    const user = await getUserByEmail(data.email)
+    if (!user) {
+      return {
+        success: false,
+        message: 'Invalid email or password',
+        errors: {
+          email: ['Invalid email or password'],
+        },
+      }
+    }
+
+    // Verify password
+    const isPasswordValid = await verifyPassword(data.password, user.password)
+    if (!isPasswordValid) {
+      return {
+        success: false,
+        message: 'Invalid email or password',
+        errors: {
+          password: ['Invalid email or password'],
+        },
+      }
+    }
+
+    // Create session
+    await createSession(user.id)
+
+    return {
+      success: true,
+      message: 'Signed in successfully',
+    }
+  } catch (error) {
+    console.error('Sign in error:', error)
+    return {
+      success: false,
+      message: 'An error occurred while signing in',
+      error: 'Failed to sign in',
+    }
+  }
+}
+
+export const signUp = async (formData: FormData): Promise<ActionResponse> => {
+  try {
+    // await mockDelay(700)
+
+    // Extract data from form
+    const data = {
+      email: formData.get('email') as string,
+      password: formData.get('password') as string,
+      confirmPassword: formData.get('confirmPassword') as string,
+    }
+
+    // Validate with Zod
+    const validatedData = SignUpSchema.safeParse(data)
+    if (!validatedData.success) {
+      return {
+        success: false,
+        message: 'Validation failed',
+        errors: validatedData.error.flatten().fieldErrors,
+      }
+    }
+
+    // Check if user already exists
+    const existingUser = await getUserByEmail(data.email)
+    if (existingUser) {
+      return {
+        success: false,
+        message: 'User with this email already exists',
+        errors: {
+          email: ['User with this email already exists'],
+        },
+      }
+    }
+
+    // Create new user
+    const user = await createUser(data.email, data.password)
+    if (!user) {
+      return {
+        success: false,
+        message: 'Failed to create user',
+        error: 'Failed to create user',
+      }
+    }
+
+    // Create session for the newly registered user
+    await createSession(user.id)
+
+    return {
+      success: true,
+      message: 'Account created successfully',
+    }
+  } catch (error) {
+    console.error('Sign up error:', error)
+    return {
+      success: false,
+      message: 'An error occurred while creating your account',
+      error: 'Failed to create account',
+    }
+  }
+}
+
+export const signOut = async (): Promise<void> => {
+  try {
+    // await mockDelay(300)
+    await deleteSession()
+  } catch (error) {
+    console.error('Sign out error:', error)
+    throw new Error('Failed to sign out')
+  } finally {
+    redirect('/signin')
+  }
 }
