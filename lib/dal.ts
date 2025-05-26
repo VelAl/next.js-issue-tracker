@@ -40,9 +40,7 @@ export const getUserByEmail = async (email: string) => {
 export async function getIssues() {
   try {
     const result = await db.query.issues.findMany({
-      with: {
-        user: true,
-      },
+      with: { user: true },
       orderBy: (issues, { desc }) => [desc(issues.createdAt)],
     })
     return result
