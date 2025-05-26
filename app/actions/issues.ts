@@ -7,6 +7,9 @@ import { getCurrentUser } from '@/lib/dal'
 import { z } from 'zod'
 import { mockDelay } from '@/lib/utils'
 
+export type T_IssueType = 'backlog' | 'todo' | 'in_progress' | 'done'
+export type T_IssuePriority = 'low' | 'medium' | 'high'
+
 // Define Zod schema for issue validation
 const IssueSchema = z.object({
   title: z
@@ -26,11 +29,61 @@ const IssueSchema = z.object({
   userId: z.string().min(1, 'User ID is required'),
 })
 
-export type IssueData = z.infer<typeof IssueSchema>
+export type T_Issue = z.infer<typeof IssueSchema>
 
 export type ActionResponse = {
   success: boolean
   message: string
   errors?: Record<string, string[]>
   error?: string
+}
+
+export const createIssue = async (data: T_Issue): Promise<ActionResponse> => {
+  try {
+    // Security check - ensure user is authenticated
+    const user = await getCurrentUser()
+    if (!user) {
+      return {
+        success: false,
+        message: 'Unauthorized access',
+        error: 'Unauthorized',
+      }
+    }
+
+    // Validate with Zod
+    const { data: validatedData, success, error } = IssueSchema.safeParse(data)
+    if (!success) {
+      return {
+        success: false,
+        message: 'Validation failed',
+        errors: error.flatten().fieldErrors,
+      }
+    }
+
+    // Create issue with validated data
+    await db.insert(issues).values({
+      title: validatedData.title,
+      description: validatedData.description || null,
+      status: validatedData.status,
+      priority: validatedData.priority,
+      userId: validatedData.userId,
+    })
+
+    return { success: true, message: 'Issue created successfully' }
+  } catch (error) {
+    console.error('Error creating issue:', error)
+    return {
+      success: false,
+      message: 'An error occurred while creating the issue',
+      error: 'Failed to create issue',
+    }
+  }
+}
+
+export const updateIssue = async (id: number, data: T_Issue) => {
+  return {
+    success: false,
+    message: '',
+    errors: undefined,
+  }
 }
