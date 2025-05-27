@@ -1,6 +1,6 @@
 import { Issue } from '@/db/schema'
 import { formatRelativeTime } from '@/lib/utils'
-import { Priority, Status } from '@/lib/types'
+import { T_IssuePriority, T_IssueStatus } from '@/lib/types'
 import Link from 'next/link'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from './ui/Card'
 import Badge from './ui/Badge'
@@ -53,8 +53,10 @@ export default function IssueCard({ issue }: IssueCardProps) {
             </p>
           )}
           <div className="flex flex-wrap gap-2">
-            <Badge status={status as Status}>{getStatusLabel(status)}</Badge>
-            <Badge priority={priority as Priority}>
+            <Badge status={status as T_IssueStatus}>
+              {getStatusLabel(status)}
+            </Badge>
+            <Badge priority={priority as T_IssuePriority}>
               {getPriorityLabel(priority)}
             </Badge>
           </div>

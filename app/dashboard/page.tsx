@@ -4,7 +4,7 @@ import Button from '../components/ui/Button'
 import { PlusIcon } from 'lucide-react'
 import Badge from '../components/ui/Badge'
 import { formatRelativeTime } from '@/lib/utils'
-import { Priority, Status } from '@/lib/types'
+import { T_IssuePriority, T_IssueStatus } from '@/lib/types'
 import { ISSUE_STATUS, ISSUE_PRIORITY } from '@/db/schema'
 
 export default async function DashboardPage() {
@@ -47,13 +47,13 @@ export default async function DashboardPage() {
                     {issue.title}
                   </div>
                   <div className="col-span-2">
-                    <Badge status={issue.status as Status}>
-                      {ISSUE_STATUS[issue.status as Status].label}
+                    <Badge status={issue.status as T_IssueStatus}>
+                      {ISSUE_STATUS[issue.status as T_IssueStatus].label}
                     </Badge>
                   </div>
                   <div className="col-span-2">
-                    <Badge priority={issue.priority as Priority}>
-                      {ISSUE_PRIORITY[issue.priority as Priority].label}
+                    <Badge priority={issue.priority as T_IssuePriority}>
+                      {ISSUE_PRIORITY[issue.priority as T_IssuePriority].label}
                     </Badge>
                   </div>
                   <div className="col-span-3 text-sm text-gray-500 dark:text-gray-400">

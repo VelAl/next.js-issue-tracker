@@ -13,13 +13,8 @@ import {
   FormSelect,
   FormError,
 } from './ui/Form'
-import {
-  createIssue,
-  ActionResponse,
-  updateIssue,
-  T_IssueType,
-  T_IssuePriority,
-} from '@/app/actions/issues'
+import { createIssue, ActionResponse, updateIssue } from '@/app/actions/issues'
+import { T_IssuePriority, T_IssueStatus } from '@/lib/types'
 
 interface IssueFormProps {
   issue?: Issue
@@ -47,7 +42,7 @@ export default function IssueForm({
       const data = {
         title: formData.get('title') as string,
         description: formData.get('description') as string,
-        status: formData.get('status') as T_IssueType,
+        status: formData.get('status') as T_IssueStatus,
         priority: formData.get('priority') as T_IssuePriority,
         userId,
       }
