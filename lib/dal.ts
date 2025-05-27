@@ -9,7 +9,7 @@ import { mockDelay } from './utils'
 // import { mockDelay } from './utils'
 
 //____CURRENT_USER______________________________________
-export const getCurrentUser = async () => {
+export const getCurrentUser = cache(async () => {
   const session = await getSession()
   if (!session) return null
 
@@ -24,7 +24,7 @@ export const getCurrentUser = async () => {
     console.error('Error getting user by ID:', error)
     return null
   }
-}
+})
 
 //____GET_USER_BY_EMAIL_________________________________
 export const getUserByEmail = async (email: string) => {

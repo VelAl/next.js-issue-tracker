@@ -7,11 +7,9 @@ import { Trash2Icon } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { deleteIssue } from '@/app/actions/issues'
 
-interface DeleteIssueButtonProps {
-  id: number
-}
+type T_Props = { id: number }
 
-export default function DeleteIssueButton({ id }: DeleteIssueButtonProps) {
+export default function DeleteIssueButton({ id }: T_Props) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [showConfirm, setShowConfirm] = useState(false)
